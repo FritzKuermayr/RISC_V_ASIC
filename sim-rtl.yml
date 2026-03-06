@@ -1,0 +1,54 @@
+# Specify Global Variables
+simClockPeriod : &SIM_CLK_PERIOD "CLOCK_PERIOD=20.00"
+simOptions: &SIM_OPTIONS
+  - "-notice"
+  - "-line"
+  - "+lint=all,noVCDE,noONGS,noUI"
+  - "+warn=noTMR"
+  - "-error=PCWM-L"
+  - "+v2k"
+  - "-debug_access+all"
+  - "-kdb"
+  - "+vcs+lic+wait"
+  - "+vcs+initreg+random"
+  # - "+define+no_cache_mem"
+  - "+rad"
+  - "-quiet"
+  - "+define+DEBUG"
+  - "-sverilog"
+  - "-lca"
+
+simVerilogSrc: &SIM_VERILOG_SRC
+  - "src/Opcode_pkg.sv"  
+  - "src/ALUop_pkg.sv"
+  - "src/const_pkg.sv"
+  - "src/ALU.sv"
+  - "src/ALUdec.sv"
+  - "src/Riscv151.sv"
+  - "src/Memory151.sv"
+  - "src/ExtMemModel.sv"
+  - "src/no_cache_mem.sv"
+  - "src/Cache.sv"
+  - "src/riscv_top.sv"
+  - "src/riscv_arbiter.sv"
+  - "src/ALUTestbench.sv"
+  - "src/ALUTestVectorTestbench.sv"
+  - "src/riscv_test_harness.sv"
+  - "src/antenna_stub.sv"
+  # Add more files here if you need
+
+tb_name: &TB_NAME "ALUTestbench"
+# tb_name: &TB_NAME "ALUTestVectorTestbench"
+# tb_name: &TB_NAME "rocketTestHarness"
+
+# RTL Simulation Variables
+sim.inputs:
+  input_files: *SIM_VERILOG_SRC
+  timescale:   "1ns/1ps"
+  options:     *SIM_OPTIONS
+  top_module:  *TB_NAME
+  tb_name:     *TB_NAME
+  defines: 
+    - *SIM_CLK_PERIOD
+  execute_sim: false
+
