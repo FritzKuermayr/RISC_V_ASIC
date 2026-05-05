@@ -11,7 +11,7 @@ simOptions: &SIM_OPTIONS
   - "-kdb"
   - "+vcs+lic+wait"
   - "+vcs+initreg+random"
-  - "+define+no_cache_mem"
+ # - "+define+no_cache_mem"
   - "+rad"
   - "-quiet"
   - "+define+DEBUG"
@@ -37,7 +37,7 @@ simVerilogSrc: &SIM_VERILOG_SRC
   - "src/antenna_stub.sv"
   # Add more files here if you need
 
-tb_name: &TB_NAME "ALUTestbench"
+tb_name: &TB_NAME "rocketTestHarness"
 # tb_name: &TB_NAME "ALUTestVectorTestbench"
 # tb_name: &TB_NAME "rocketTestHarness"
 

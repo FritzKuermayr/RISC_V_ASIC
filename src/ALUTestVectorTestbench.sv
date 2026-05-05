@@ -71,7 +71,7 @@ module ALUTestVectorTestbench;
   // testvector input file, which you can find with the command:
   // % wc -l ../tests/testvectors.input
   /////////////////////////////////////////////////////////////////
-  localparam int testcases = 26;
+  localparam int testcases = 130;
 
   // Each testcase has 107:0 => 108 bits total (matches original)
   logic [106:0] testvector [0:testcases-1];
@@ -85,6 +85,16 @@ module ALUTestVectorTestbench;
     for (i = 0; i < testcases; i = i + 1) begin
       // TODO: unpack testvector[i] into opcode/funct/add_rshift_type/A/B/REFout,
       // drive inputs, wait as needed, then call checkOutput(opcode, funct, add_rshift_type).
+
+      opcode = testvector[i][106:100];
+      funct  = testvector[i][99:97];
+      add_rshift_type = testvector[i][96];
+      A = testvector[i][95:64];
+      B = testvector[i][63:32];
+      REFout = testvector[i][31:0];
+      
+      #1;
+      checkOutput(opcode, funct, add_rshift_type);
     end
 
     $display("\n\nALL TESTS PASSED!");
