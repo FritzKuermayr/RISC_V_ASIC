@@ -237,7 +237,7 @@ module cache #(
     unique case (state)
       // cache FSM is in IDLE state --> now wb/refill rn in process
       S_IDLE: begin
-        cpu_req_ready = 1'b1; // ready to accept a request
+        cpu_req_ready = !cpu_req_valid || hit; // ready to accept a request
 
         if (cpu_req_valid && hit) begin
           if (cpu_req_write == 4'b0000) begin
@@ -321,6 +321,7 @@ module cache #(
       // FSM state right after the refill has finished
 
       S_RESPOND: begin
+        cpu_req_ready  = 1'b1;
         if (req_write_r == 4'b0000) begin // Checks whether the original miss was a read miss; req_write_r = 4'b0000 → read; nonzero -> miss
           cpu_resp_valid = 1'b1; // if it was a read miss --> tell cpu data is now valid
           cpu_resp_data = get_word_from_line(refill_line_r, req_offset_r); // return the requested 32-bit word
