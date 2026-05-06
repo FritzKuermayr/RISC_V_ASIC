@@ -1,11 +1,6 @@
 # Placement Constraints (standard cells, SRAMs)
 #
-# Source: hammer/src/hammer-vlsi/defaults.yml
-# Valid orientations:
-#   "r0", "r90", "r180", "r270", "mx", "mx90", "my", "my90"
-# x, y in um; width, height in um (auto-fillable for hierarchical/hardmacro).
-#
-# This design uses 2-way set-associative caches with:
+# Direct-mapped cache:
 #   1x sram22_64x32m4w8   instance "Cache_Tag"        (metadata)
 #   4x sram22_256x32m4w8  instances "Cache_Data_0..3" (data banks)
 # per cache, instantiated inside  riscv_top/mem/icache  and  riscv_top/mem/dcache.
@@ -23,7 +18,7 @@ vlsi.inputs.placement_constraints:
     width:  &FP_WIDTH 3000
     height: 3000
 
-  # ICache (lower band)
+  # ICache
   - path: "riscv_top/mem/icache/Cache_Tag"
     type: hardmacro
     x: 60
@@ -59,7 +54,7 @@ vlsi.inputs.placement_constraints:
     orientation: "r0"
     top_layer: met3
 
-  # DCache (upper band, mirrored about x so pins face the digital region)
+  # DCache (mirrored)
   - path: "riscv_top/mem/dcache/Cache_Tag"
     type: hardmacro
     x: 60
@@ -103,22 +98,15 @@ vlsi.inputs.placement_constraints:
     width:  *FP_WIDTH
     height: 1.08
 
-# Pin placement: pins on the bottom edge, met4
 vlsi.inputs.pin_mode: generated
 vlsi.inputs.pin.generate_mode: semi_auto
 vlsi.inputs.pin.assignments: [
   {pins: "*", layers: ["met4"], side: "bottom"}
 ]
 
-# Hammer auto-CPF for simple power designs
 vlsi.inputs.power_spec_mode: "auto"
 vlsi.inputs.power_spec_type: "cpf"
 
-# Clock-Concurrent Optimization for CTS
 par.innovus.use_cco: true
 
-# Auto-floorplan exploration is OFF; keep manual constraints above
-# par.innovus.floorplan_mode: auto
-
-# SCL has no tapcells; disable Hammer's auto rail-generation
 par.generate_power_straps_options.by_tracks.generate_rail_layer: false
