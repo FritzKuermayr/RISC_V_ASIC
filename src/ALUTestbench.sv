@@ -151,3 +151,5 @@ module ALUTestbench;
   end
 
 endmodule
+
+`default_nettype wire

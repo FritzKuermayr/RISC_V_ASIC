@@ -68,3 +68,5 @@ module ALUdec (
   end
 
 endmodule
+
+`default_nettype wire

@@ -160,3 +160,5 @@ module Memory151 (
 `endif
 
 endmodule
+
+`default_nettype wire

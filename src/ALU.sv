@@ -37,3 +37,5 @@ module ALU (
     end
 
 endmodule
+
+`default_nettype wire

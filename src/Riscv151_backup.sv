@@ -410,3 +410,5 @@ module Riscv151 (
 
 endmodule
 
+
+`default_nettype wire

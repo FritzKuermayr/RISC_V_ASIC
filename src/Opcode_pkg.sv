@@ -72,3 +72,5 @@ package opcode_pkg;
   localparam logic       FNC2_SRA      = 1'b1;
 
 endpackage : opcode_pkg
+
+`default_nettype wire

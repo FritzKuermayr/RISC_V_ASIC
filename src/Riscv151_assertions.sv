@@ -85,3 +85,5 @@ bind Riscv151 Riscv_assertions u_riscv_assertions();
 
 
 
+
+`default_nettype wire

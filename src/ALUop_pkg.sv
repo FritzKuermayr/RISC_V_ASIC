@@ -16,3 +16,5 @@ package alu_op_pkg;
     ALU_XXX    = 4'd15
   } alu_op_t;
 endpackage : alu_op_pkg
+
+`default_nettype wire

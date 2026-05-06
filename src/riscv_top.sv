@@ -82,3 +82,5 @@ module riscv_top (
   );
 
 endmodule
+
+`default_nettype wire

@@ -42,3 +42,5 @@ package const_pkg;
   localparam logic [11:0] CSR_STATUS = 12'h50A;
 
 endpackage : const_pkg
+
+`default_nettype wire

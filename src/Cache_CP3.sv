@@ -453,3 +453,5 @@ module cache #(
   end
 
 endmodule
+
+`default_nettype wire

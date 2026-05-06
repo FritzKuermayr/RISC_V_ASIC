@@ -103,3 +103,5 @@ module ALUTestVectorTestbench;
   end
 
 endmodule
+
+`default_nettype wire

@@ -47,3 +47,5 @@ module riscv_arbiter (
       mem_resp_valid && (mem_resp_tag == MEM_TAG_BITS'(1));
 
 endmodule
+
+`default_nettype wire

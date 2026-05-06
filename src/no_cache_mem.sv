@@ -76,3 +76,5 @@ module no_cache_mem #(
   end
 
 endmodule
+
+`default_nettype wire

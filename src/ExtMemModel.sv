@@ -118,3 +118,5 @@ module ExtMemModel (
   assign mem_req_data_ready = state_busy && state_rw;
 
 endmodule
+
+`default_nettype wire
