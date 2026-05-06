@@ -2,16 +2,14 @@
 
 import const_pkg::*;
 
-// Direct-mapped cache, 4 KB.
-//   64 sets x 16 words/line.
-//   Tag SRAM:  1x sram22_64x32m4w8.   addr = set[5:0].
-//   Data SRAM: 4x sram22_256x32m4w8.  addr = {set[5:0], beat[1:0]}.
-//   Reset warmup writes valid=0 to all 64 tag entries.
-//   Hit latency: 1-cycle stall.
-//   Miss: optional dirty writeback, refill with early-serve + inline write merge.
-
+// 4 KB, 2-way set-associative, write-back cache.
+// Data SRAM address layout: {way, set, beat}; four SRAMs hold the four words
+// in each 128-bit memory beat. Metadata SRAM address layout: {way, set}.
+// Because there is only one metadata SRAM port, way lookups are serialized.
+// The register-side hot-line/beat buffers make the common repeated/sequential
+// access path ready in the same cycle, which is especially important for I$.
 module cache #(
-  parameter int unsigned NUM_WAYS       = 1,
+  parameter int unsigned NUM_WAYS       = 2,
   parameter int unsigned LINES          = 64,
   parameter int unsigned CPU_WIDTH      = CPU_INST_BITS,
   parameter int unsigned WORD_ADDR_BITS = CPU_ADDR_BITS - $clog2(CPU_INST_BITS/8)
@@ -41,7 +39,8 @@ module cache #(
   input  logic [MEM_DATA_BITS-1:0]     mem_resp_data
 );
 
-  // Geometry
+  localparam int unsigned SETS           = LINES / NUM_WAYS;
+  localparam int unsigned WAY_BITS       = $clog2(NUM_WAYS);
   localparam int unsigned WORDS_PER_LINE = 16;
   localparam int unsigned LINE_BITS      = WORDS_PER_LINE * CPU_WIDTH;
   localparam int unsigned BEATS_PER_LINE = LINE_BITS / MEM_DATA_BITS;
@@ -49,12 +48,24 @@ module cache #(
   localparam int unsigned BEAT_BITS      = $clog2(BEATS_PER_LINE);
   localparam int unsigned WORD_IN_BEAT_B = $clog2(WORDS_PER_BEAT);
   localparam int unsigned OFFSET_BITS    = $clog2(WORDS_PER_LINE);
-  localparam int unsigned INDEX_BITS     = $clog2(LINES);
+  localparam int unsigned INDEX_BITS     = $clog2(SETS);
   localparam int unsigned TAG_BITS       = WORD_ADDR_BITS - INDEX_BITS - OFFSET_BITS;
   localparam int unsigned MEM_ADDR_LSB   = $clog2(WORDS_PER_BEAT);
   localparam int unsigned INIT_BITS      = $clog2(LINES);
+  localparam int unsigned META_PAD_BITS  = 32 - TAG_BITS - 2;
 
-  // CPU address decode
+  typedef enum logic [3:0] {
+    S_INIT      = 4'd0,
+    S_IDLE      = 4'd1,
+    S_LOOKUP    = 4'd2,
+    S_WB_ADDR   = 4'd3,
+    S_WB_DATA   = 4'd4,
+    S_READ_ADDR = 4'd5,
+    S_READ_DATA = 4'd6
+  } state_t;
+
+  state_t state, state_n;
+
   logic [OFFSET_BITS-1:0]    cpu_offset;
   logic [INDEX_BITS-1:0]     cpu_index;
   logic [TAG_BITS-1:0]       cpu_tag;
@@ -67,7 +78,6 @@ module cache #(
   assign cpu_beat         = cpu_offset[OFFSET_BITS-1:WORD_IN_BEAT_B];
   assign cpu_word_in_beat = cpu_offset[WORD_IN_BEAT_B-1:0];
 
-  // Latched request
   logic [TAG_BITS-1:0]       req_tag_r;
   logic [INDEX_BITS-1:0]     req_index_r;
   logic [BEAT_BITS-1:0]      req_beat_r;
@@ -75,79 +85,223 @@ module cache #(
   logic [3:0]                req_write_r;
   logic [CPU_WIDTH-1:0]      req_data_r;
 
-  // FSM
-  typedef enum logic [3:0] {
-    S_INIT      = 4'd0,
-    S_IDLE      = 4'd1,
-    S_LOOKUP    = 4'd2,
-    S_WB_ADDR   = 4'd3,
-    S_WB_DATA   = 4'd4,
-    S_READ_ADDR = 4'd5,
-    S_READ_DATA = 4'd6
-  } state_t;
-  state_t state, state_n;
-
   logic [INIT_BITS-1:0] init_cnt_r, init_cnt_n;
   logic [BEAT_BITS-1:0] beat_cnt_r, beat_cnt_n;
-  logic [LINE_BITS-1:0] refill_line_r;
   logic                 served_q, served_n;
 
-  logic [TAG_BITS-1:0]  victim_tag_r;
-  logic                 victim_dirty_r;
+  logic [WAY_BITS-1:0] lookup_way_r, lookup_way_n;
+  logic [WAY_BITS-1:0] victim_way_r;
+  logic [TAG_BITS-1:0] victim_tag_r;
 
-  // Tag SRAM signals (sram22_64x32m4w8)
-  // word layout: {11'b0, dirty, valid, tag[19:0]}
-  logic                  tag_ce, tag_we;
-  logic [3:0]            tag_wmask;
-  logic [INDEX_BITS-1:0] tag_addr;
-  logic [31:0]           tag_din, tag_dout;
+  logic                way0_valid_r;
+  logic                way0_dirty_r;
+  logic [TAG_BITS-1:0] way0_tag_r;
+
+  logic [WAY_BITS-1:0] repl_way [0:SETS-1];
+  integer reset_i;
+
+  logic                            tag_ce, tag_we;
+  logic [3:0]                      tag_wmask;
+  logic [WAY_BITS+INDEX_BITS-1:0]  tag_addr;
+  logic [31:0]                     tag_din, tag_dout;
 
   logic                tag_dout_valid;
   logic                tag_dout_dirty;
   logic [TAG_BITS-1:0] tag_dout_tag;
-  assign tag_dout_tag    = tag_dout[TAG_BITS-1:0];
-  assign tag_dout_valid  = tag_dout[TAG_BITS];
-  assign tag_dout_dirty  = tag_dout[TAG_BITS+1];
 
-  // Data SRAM signals (4x sram22_256x32m4w8)
-  logic                            data_ce;
-  logic [INDEX_BITS+BEAT_BITS-1:0] data_addr;
-  logic        data_we    [0:3];
-  logic [3:0]  data_wmask [0:3];
-  logic [31:0] data_din   [0:3];
-  logic [31:0] data_dout  [0:3];
+  assign tag_dout_tag   = tag_dout[TAG_BITS-1:0];
+  assign tag_dout_valid = tag_dout[TAG_BITS];
+  assign tag_dout_dirty = tag_dout[TAG_BITS+1];
 
-  // Hit detection (in S_LOOKUP)
-  logic hit_n;
-  assign hit_n = tag_dout_valid && (tag_dout_tag == req_tag_r);
+  logic                                  data_ce;
+  logic [WAY_BITS+INDEX_BITS+BEAT_BITS-1:0] data_addr;
+  logic        data_we    [0:WORDS_PER_BEAT-1];
+  logic [3:0]  data_wmask [0:WORDS_PER_BEAT-1];
+  logic [31:0] data_din   [0:WORDS_PER_BEAT-1];
+  logic [31:0] data_dout  [0:WORDS_PER_BEAT-1];
 
-  // Hit word
-  logic [CPU_WIDTH-1:0] hit_word;
-  assign hit_word = data_dout[req_word_in_beat_r];
+  logic                  linebuf_valid;
+  logic [WAY_BITS-1:0]   linebuf_way;
+  logic [TAG_BITS-1:0]   linebuf_tag;
+  logic [INDEX_BITS-1:0] linebuf_index;
+  logic [LINE_BITS-1:0]  linebuf_line;
 
-  // Memory addresses
+  logic [WAY_BITS-1:0]      beatbuf_way;
+  logic                     beatbuf_valid;
+  logic [TAG_BITS-1:0]      beatbuf_tag;
+  logic [INDEX_BITS-1:0]    beatbuf_index;
+  logic [BEAT_BITS-1:0]     beatbuf_beat;
+  logic [MEM_DATA_BITS-1:0] beatbuf_data;
+
+  logic [LINE_BITS-1:0] refill_line_r;
+
+  function automatic logic [31:0] make_meta(
+    input logic                 dirty,
+    input logic                 valid,
+    input logic [TAG_BITS-1:0]  tag
+  );
+    make_meta = {{META_PAD_BITS{1'b0}}, dirty, valid, tag};
+  endfunction
+
+  function automatic logic [CPU_WIDTH-1:0] get_word_from_line(
+    input logic [LINE_BITS-1:0]   line,
+    input logic [OFFSET_BITS-1:0] offset
+  );
+    get_word_from_line = line[offset * CPU_WIDTH +: CPU_WIDTH];
+  endfunction
+
+  function automatic logic [LINE_BITS-1:0] set_word_in_line(
+    input logic [LINE_BITS-1:0]   line,
+    input logic [OFFSET_BITS-1:0] offset,
+    input logic [CPU_WIDTH-1:0]   word
+  );
+    logic [LINE_BITS-1:0] tmp;
+    begin
+      tmp = line;
+      tmp[offset * CPU_WIDTH +: CPU_WIDTH] = word;
+      set_word_in_line = tmp;
+    end
+  endfunction
+
+  function automatic logic [CPU_WIDTH-1:0] get_word_from_beat(
+    input logic [MEM_DATA_BITS-1:0]  beat,
+    input logic [WORD_IN_BEAT_B-1:0] word_idx
+  );
+    get_word_from_beat = beat[word_idx * CPU_WIDTH +: CPU_WIDTH];
+  endfunction
+
+  function automatic logic [MEM_DATA_BITS-1:0] set_word_in_beat(
+    input logic [MEM_DATA_BITS-1:0]  beat,
+    input logic [WORD_IN_BEAT_B-1:0] word_idx,
+    input logic [CPU_WIDTH-1:0]      word
+  );
+    logic [MEM_DATA_BITS-1:0] tmp;
+    begin
+      tmp = beat;
+      tmp[word_idx * CPU_WIDTH +: CPU_WIDTH] = word;
+      set_word_in_beat = tmp;
+    end
+  endfunction
+
+  function automatic logic [LINE_BITS-1:0] set_beat_in_line(
+    input logic [LINE_BITS-1:0]       line,
+    input logic [BEAT_BITS-1:0]       beat_idx,
+    input logic [MEM_DATA_BITS-1:0]   beat
+  );
+    logic [LINE_BITS-1:0] tmp;
+    begin
+      tmp = line;
+      tmp[beat_idx * MEM_DATA_BITS +: MEM_DATA_BITS] = beat;
+      set_beat_in_line = tmp;
+    end
+  endfunction
+
+  function automatic logic [CPU_WIDTH-1:0] merge_word(
+    input logic [CPU_WIDTH-1:0] old_word,
+    input logic [CPU_WIDTH-1:0] new_word,
+    input logic [3:0]           mask
+  );
+    logic [CPU_WIDTH-1:0] tmp;
+    begin
+      tmp = old_word;
+      if (mask[0]) tmp[7:0]   = new_word[7:0];
+      if (mask[1]) tmp[15:8]  = new_word[15:8];
+      if (mask[2]) tmp[23:16] = new_word[23:16];
+      if (mask[3]) tmp[31:24] = new_word[31:24];
+      merge_word = tmp;
+    end
+  endfunction
+
+  logic linebuf_hit;
+  logic beatbuf_hit;
+  logic hot_hit;
+  logic [WAY_BITS-1:0] hot_way;
+  logic [CPU_WIDTH-1:0] hot_word_old;
+  logic [CPU_WIDTH-1:0] hot_word_new;
+  logic [LINE_BITS-1:0] hot_line_new;
+  logic [MEM_DATA_BITS-1:0] hot_beat_new;
+
+  assign linebuf_hit =
+      linebuf_valid && (linebuf_tag == cpu_tag) && (linebuf_index == cpu_index);
+
+  assign beatbuf_hit =
+      beatbuf_valid && (beatbuf_tag == cpu_tag) &&
+      (beatbuf_index == cpu_index) && (beatbuf_beat == cpu_beat);
+
+  assign hot_hit =
+      linebuf_hit || (!linebuf_hit && beatbuf_hit);
+
+  assign hot_way =
+      linebuf_hit ? linebuf_way : beatbuf_way;
+
+  assign hot_word_old =
+      linebuf_hit ? get_word_from_line(linebuf_line, cpu_offset)
+                  : get_word_from_beat(beatbuf_data, cpu_word_in_beat);
+
+  assign hot_word_new =
+      merge_word(hot_word_old, cpu_req_data, cpu_req_write);
+
+  assign hot_line_new =
+      set_word_in_line(linebuf_line, cpu_offset, hot_word_new);
+
+  assign hot_beat_new =
+      set_word_in_beat(beatbuf_data, cpu_word_in_beat, hot_word_new);
+
+  logic sram_hit;
+  logic [MEM_DATA_BITS-1:0] sram_beat;
+  logic [CPU_WIDTH-1:0]     sram_word_old;
+  logic [CPU_WIDTH-1:0]     sram_word_new;
+  logic [MEM_DATA_BITS-1:0] sram_beat_new;
+
+  assign sram_hit = tag_dout_valid && (tag_dout_tag == req_tag_r);
+  assign sram_beat = {data_dout[3], data_dout[2], data_dout[1], data_dout[0]};
+  assign sram_word_old = data_dout[req_word_in_beat_r];
+  assign sram_word_new = merge_word(sram_word_old, req_data_r, req_write_r);
+  assign sram_beat_new = set_word_in_beat(sram_beat, req_word_in_beat_r, sram_word_new);
+
+  logic [WAY_BITS-1:0] victim_way_sel;
+  logic                victim_dirty_sel;
+  logic [TAG_BITS-1:0] victim_tag_sel;
+
+  always_comb begin
+    if (!way0_valid_r) begin
+      victim_way_sel = WAY_BITS'(0);
+    end else if (!tag_dout_valid) begin
+      victim_way_sel = WAY_BITS'(1);
+    end else begin
+      victim_way_sel = repl_way[req_index_r];
+    end
+
+    victim_dirty_sel =
+        (victim_way_sel == WAY_BITS'(0)) ? way0_dirty_r : tag_dout_dirty;
+    victim_tag_sel =
+        (victim_way_sel == WAY_BITS'(0)) ? way0_tag_r : tag_dout_tag;
+  end
+
+  logic [CPU_WIDTH-1:0] refill_word_old;
+  logic [CPU_WIDTH-1:0] refill_word_new;
+  logic [MEM_DATA_BITS-1:0] refill_beat_new;
+  logic [LINE_BITS-1:0] refill_line_new;
+
+  assign refill_word_old = get_word_from_beat(mem_resp_data, req_word_in_beat_r);
+  assign refill_word_new = merge_word(refill_word_old, req_data_r, req_write_r);
+  assign refill_beat_new =
+      ((req_write_r != 4'b0000) && (beat_cnt_r == req_beat_r))
+        ? set_word_in_beat(mem_resp_data, req_word_in_beat_r, refill_word_new)
+        : mem_resp_data;
+  assign refill_line_new = set_beat_in_line(refill_line_r, beat_cnt_r, refill_beat_new);
+
   logic [WORD_ADDR_BITS-1:MEM_ADDR_LSB] refill_mem_addr;
   logic [WORD_ADDR_BITS-1:MEM_ADDR_LSB] wb_mem_addr;
+
   assign refill_mem_addr = {req_tag_r, req_index_r, {BEAT_BITS{1'b0}}};
   assign wb_mem_addr     = {victim_tag_r, req_index_r, beat_cnt_r};
 
-  // Inline merge for write miss
-  logic [CPU_WIDTH-1:0] req_beat_word_old;
-  logic [CPU_WIDTH-1:0] req_beat_word_merged;
-  assign req_beat_word_old = mem_resp_data[req_word_in_beat_r * CPU_WIDTH +: CPU_WIDTH];
-  always_comb begin
-    req_beat_word_merged = req_beat_word_old;
-    if (req_write_r[0]) req_beat_word_merged[7:0]   = req_data_r[7:0];
-    if (req_write_r[1]) req_beat_word_merged[15:8]  = req_data_r[15:8];
-    if (req_write_r[2]) req_beat_word_merged[23:16] = req_data_r[23:16];
-    if (req_write_r[3]) req_beat_word_merged[31:24] = req_data_r[31:24];
-  end
-
-  // Combinational FSM
   always_comb begin
     cpu_req_ready      = 1'b0;
     cpu_resp_valid     = 1'b0;
     cpu_resp_data      = '0;
+
     mem_req_valid      = 1'b0;
     mem_req_addr       = '0;
     mem_req_rw         = 1'b0;
@@ -167,18 +321,20 @@ module cache #(
     data_wmask = '{default: 4'h0};
     data_din   = '{default: '0};
 
-    state_n    = state;
-    init_cnt_n = init_cnt_r;
-    beat_cnt_n = beat_cnt_r;
-    served_n   = served_q;
+    state_n      = state;
+    init_cnt_n   = init_cnt_r;
+    beat_cnt_n   = beat_cnt_r;
+    lookup_way_n = lookup_way_r;
+    served_n     = served_q;
 
-    case (state)
+    unique case (state)
       S_INIT: begin
         tag_ce    = 1'b1;
         tag_we    = 1'b1;
         tag_wmask = 4'hF;
-        tag_addr  = init_cnt_r[INDEX_BITS-1:0];
+        tag_addr  = init_cnt_r;
         tag_din   = '0;
+
         if (&init_cnt_r) begin
           init_cnt_n = '0;
           state_n    = S_IDLE;
@@ -188,52 +344,72 @@ module cache #(
       end
 
       S_IDLE: begin
-        cpu_req_ready = !cpu_req_valid;
+        cpu_req_ready = !cpu_req_valid || hot_hit;
         served_n      = 1'b0;
-        if (cpu_req_valid) begin
-          tag_ce    = 1'b1;
-          tag_addr  = cpu_index;
-          data_ce   = 1'b1;
-          data_addr = {cpu_index, cpu_beat};
-          state_n   = S_LOOKUP;
-        end
-      end
 
-      S_LOOKUP: begin
-        if (hit_n) begin
-          if (req_write_r == 4'b0000) begin
-            // Read hit
+        if (cpu_req_valid && hot_hit) begin
+          if (cpu_req_write == 4'b0000) begin
             cpu_resp_valid = 1'b1;
-            cpu_resp_data  = hit_word;
-            cpu_req_ready  = 1'b1;
-            state_n        = S_IDLE;
+            cpu_resp_data  = hot_word_old;
           end else begin
-            // Write hit: byte-write into one bank, mark dirty
             data_ce                          = 1'b1;
-            data_addr                        = {req_index_r, req_beat_r};
-            data_we   [req_word_in_beat_r]   = 1'b1;
-            data_wmask[req_word_in_beat_r]   = req_write_r;
-            data_din  [req_word_in_beat_r]   = req_data_r;
+            data_addr                        = {hot_way, cpu_index, cpu_beat};
+            data_we   [cpu_word_in_beat]     = 1'b1;
+            data_wmask[cpu_word_in_beat]     = cpu_req_write;
+            data_din  [cpu_word_in_beat]     = cpu_req_data;
 
             tag_ce    = 1'b1;
             tag_we    = 1'b1;
             tag_wmask = 4'hF;
-            tag_addr  = req_index_r;
-            tag_din   = {11'b0, 1'b1, 1'b1, req_tag_r};
-
-            cpu_req_ready = 1'b1;
-            state_n       = S_IDLE;
+            tag_addr  = {hot_way, cpu_index};
+            tag_din   = make_meta(1'b1, 1'b1, cpu_tag);
           end
+        end else if (cpu_req_valid) begin
+          tag_ce       = 1'b1;
+          tag_addr     = {WAY_BITS'(0), cpu_index};
+          data_ce      = 1'b1;
+          data_addr    = {WAY_BITS'(0), cpu_index, cpu_beat};
+          lookup_way_n = WAY_BITS'(0);
+          state_n      = S_LOOKUP;
+        end
+      end
+
+      S_LOOKUP: begin
+        if (sram_hit) begin
+          if (req_write_r == 4'b0000) begin
+            cpu_resp_valid = 1'b1;
+            cpu_resp_data  = sram_word_old;
+          end else begin
+            data_ce                            = 1'b1;
+            data_addr                          = {lookup_way_r, req_index_r, req_beat_r};
+            data_we   [req_word_in_beat_r]     = 1'b1;
+            data_wmask[req_word_in_beat_r]     = req_write_r;
+            data_din  [req_word_in_beat_r]     = req_data_r;
+
+            tag_ce    = 1'b1;
+            tag_we    = 1'b1;
+            tag_wmask = 4'hF;
+            tag_addr  = {lookup_way_r, req_index_r};
+            tag_din   = make_meta(1'b1, 1'b1, req_tag_r);
+          end
+
+          cpu_req_ready = 1'b1;
+          state_n       = S_IDLE;
+        end else if (lookup_way_r == WAY_BITS'(0)) begin
+          tag_ce       = 1'b1;
+          tag_addr     = {WAY_BITS'(1), req_index_r};
+          data_ce      = 1'b1;
+          data_addr    = {WAY_BITS'(1), req_index_r, req_beat_r};
+          lookup_way_n = WAY_BITS'(1);
+          state_n      = S_LOOKUP;
         end else begin
-          // Miss
           beat_cnt_n = '0;
-          if (tag_dout_valid && tag_dout_dirty) begin
-            // Pre-read victim beat 0
+          if (victim_dirty_sel) begin
             data_ce   = 1'b1;
-            data_addr = {req_index_r, {BEAT_BITS{1'b0}}};
+            data_addr = {victim_way_sel, req_index_r, {BEAT_BITS{1'b0}}};
             state_n   = S_WB_ADDR;
           end else begin
-            state_n = S_READ_ADDR;
+            state_n   = S_READ_ADDR;
           end
         end
       end
@@ -242,13 +418,17 @@ module cache #(
         mem_req_valid = 1'b1;
         mem_req_rw    = 1'b1;
         mem_req_addr  = wb_mem_addr;
-        if (mem_req_ready) state_n = S_WB_DATA;
+
+        if (mem_req_ready) begin
+          state_n = S_WB_DATA;
+        end
       end
 
       S_WB_DATA: begin
         mem_req_data_valid = 1'b1;
-        mem_req_data_bits  = {data_dout[3], data_dout[2], data_dout[1], data_dout[0]};
+        mem_req_data_bits  = sram_beat;
         mem_req_data_mask  = '1;
+
         if (mem_req_data_ready) begin
           if (beat_cnt_r == BEAT_BITS'(BEATS_PER_LINE-1)) begin
             beat_cnt_n = '0;
@@ -256,7 +436,7 @@ module cache #(
           end else begin
             beat_cnt_n = beat_cnt_r + 1'b1;
             data_ce    = 1'b1;
-            data_addr  = {req_index_r, beat_cnt_r + 1'b1};
+            data_addr  = {victim_way_r, req_index_r, beat_cnt_r + 1'b1};
             state_n    = S_WB_ADDR;
           end
         end
@@ -266,6 +446,7 @@ module cache #(
         mem_req_valid = 1'b1;
         mem_req_rw    = 1'b0;
         mem_req_addr  = refill_mem_addr;
+
         if (mem_req_ready) begin
           beat_cnt_n = '0;
           state_n    = S_READ_DATA;
@@ -275,20 +456,17 @@ module cache #(
       S_READ_DATA: begin
         if (mem_resp_valid) begin
           data_ce   = 1'b1;
-          data_addr = {req_index_r, beat_cnt_r};
-          for (int i = 0; i < 4; i++) begin
+          data_addr = {victim_way_r, req_index_r, beat_cnt_r};
+          for (int i = 0; i < WORDS_PER_BEAT; i++) begin
             data_we   [i] = 1'b1;
             data_wmask[i] = 4'hF;
-            data_din  [i] = mem_resp_data[i*CPU_WIDTH +: CPU_WIDTH];
+            data_din  [i] = refill_beat_new[i*CPU_WIDTH +: CPU_WIDTH];
           end
 
-          if (req_write_r != 4'b0000 && beat_cnt_r == req_beat_r) begin
-            data_din[req_word_in_beat_r] = req_beat_word_merged;
-          end
-
-          if (req_write_r == 4'b0000 && beat_cnt_r == req_beat_r && !served_q) begin
+          if ((req_write_r == 4'b0000) &&
+              (beat_cnt_r == req_beat_r) && !served_q) begin
             cpu_resp_valid = 1'b1;
-            cpu_resp_data  = req_beat_word_old;
+            cpu_resp_data  = refill_word_old;
             cpu_req_ready  = 1'b1;
             served_n       = 1'b1;
           end
@@ -297,10 +475,10 @@ module cache #(
             tag_ce    = 1'b1;
             tag_we    = 1'b1;
             tag_wmask = 4'hF;
-            tag_addr  = req_index_r;
-            tag_din   = {11'b0, (req_write_r != 4'b0000), 1'b1, req_tag_r};
+            tag_addr  = {victim_way_r, req_index_r};
+            tag_din   = make_meta((req_write_r != 4'b0000), 1'b1, req_tag_r);
 
-            if (req_write_r != 4'b0000 && !served_q) begin
+            if (req_write_r != 4'b0000) begin
               cpu_req_ready = 1'b1;
               served_n      = 1'b1;
             end
@@ -313,36 +491,73 @@ module cache #(
         end
       end
 
-      default: state_n = S_IDLE;
+      default: begin
+        state_n = S_IDLE;
+      end
     endcase
   end
 
-  // Sequential
   always_ff @(posedge clk) begin
     if (reset) begin
       state              <= S_INIT;
       init_cnt_r         <= '0;
       beat_cnt_r         <= '0;
-      refill_line_r      <= '0;
+      lookup_way_r       <= '0;
       served_q           <= 1'b0;
+
       req_tag_r          <= '0;
       req_index_r        <= '0;
       req_beat_r         <= '0;
       req_word_in_beat_r <= '0;
       req_write_r        <= '0;
       req_data_r         <= '0;
+
+      victim_way_r       <= '0;
       victim_tag_r       <= '0;
-      victim_dirty_r     <= 1'b0;
+      way0_valid_r       <= 1'b0;
+      way0_dirty_r       <= 1'b0;
+      way0_tag_r         <= '0;
+      refill_line_r      <= '0;
+
+      linebuf_valid      <= 1'b0;
+      linebuf_way        <= '0;
+      linebuf_tag        <= '0;
+      linebuf_index      <= '0;
+      linebuf_line       <= '0;
+
+      beatbuf_valid      <= 1'b0;
+      beatbuf_way        <= '0;
+      beatbuf_tag        <= '0;
+      beatbuf_index      <= '0;
+      beatbuf_beat       <= '0;
+      beatbuf_data       <= '0;
+
+      for (reset_i = 0; reset_i < SETS; reset_i = reset_i + 1) begin
+        repl_way[reset_i] <= '0;
+      end
     end else begin
-      state      <= state_n;
-      init_cnt_r <= init_cnt_n;
-      beat_cnt_r <= beat_cnt_n;
-      served_q   <= served_n;
+      state        <= state_n;
+      init_cnt_r   <= init_cnt_n;
+      beat_cnt_r   <= beat_cnt_n;
+      lookup_way_r <= lookup_way_n;
+      served_q     <= served_n;
 
-      if (state == S_READ_DATA && mem_resp_valid)
-        refill_line_r[beat_cnt_r * MEM_DATA_BITS +: MEM_DATA_BITS] <= mem_resp_data;
+      if (state == S_IDLE && cpu_req_valid && hot_hit && (cpu_req_write != 4'b0000)) begin
+        if (linebuf_hit) begin
+          linebuf_line <= hot_line_new;
+          if (beatbuf_valid && (beatbuf_tag == cpu_tag) && (beatbuf_index == cpu_index)) begin
+            beatbuf_valid <= 1'b0;
+          end
+        end else begin
+          beatbuf_data <= hot_beat_new;
+        end
+      end
 
-      if (state == S_IDLE && cpu_req_valid) begin
+      if (state == S_IDLE && cpu_req_valid && hot_hit) begin
+        repl_way[cpu_index] <= ~hot_way;
+      end
+
+      if (state == S_IDLE && cpu_req_valid && !hot_hit) begin
         req_tag_r          <= cpu_tag;
         req_index_r        <= cpu_index;
         req_beat_r         <= cpu_beat;
@@ -351,14 +566,48 @@ module cache #(
         req_data_r         <= cpu_req_data;
       end
 
-      if (state == S_LOOKUP && !hit_n) begin
-        victim_tag_r   <= tag_dout_tag;
-        victim_dirty_r <= tag_dout_dirty;
+      if (state == S_LOOKUP && sram_hit) begin
+        beatbuf_valid <= 1'b1;
+        beatbuf_way   <= lookup_way_r;
+        beatbuf_tag   <= req_tag_r;
+        beatbuf_index <= req_index_r;
+        beatbuf_beat  <= req_beat_r;
+        beatbuf_data  <= (req_write_r == 4'b0000) ? sram_beat : sram_beat_new;
+        repl_way[req_index_r] <= ~lookup_way_r;
+      end
+
+      if (state == S_LOOKUP && !sram_hit && (lookup_way_r == WAY_BITS'(0))) begin
+        way0_valid_r <= tag_dout_valid;
+        way0_dirty_r <= tag_dout_dirty;
+        way0_tag_r   <= tag_dout_tag;
+      end
+
+      if (state == S_LOOKUP && !sram_hit && (lookup_way_r == WAY_BITS'(1))) begin
+        victim_way_r <= victim_way_sel;
+        victim_tag_r <= victim_tag_sel;
+      end
+
+      if (state == S_READ_ADDR && mem_req_ready) begin
+        refill_line_r <= '0;
+      end
+
+      if (state == S_READ_DATA && mem_resp_valid) begin
+        refill_line_r <= refill_line_new;
+
+        if (beat_cnt_r == BEAT_BITS'(BEATS_PER_LINE-1)) begin
+          linebuf_valid <= 1'b1;
+          linebuf_way   <= victim_way_r;
+          linebuf_tag   <= req_tag_r;
+          linebuf_index <= req_index_r;
+          linebuf_line  <= refill_line_new;
+
+          beatbuf_valid <= 1'b0;
+          repl_way[req_index_r] <= ~victim_way_r;
+        end
       end
     end
   end
 
-  // SRAM macros
   sram22_64x32m4w8 Cache_Tag (
     .clk   (clk),
     .rstb  (~reset),
