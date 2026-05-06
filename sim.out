@@ -1,0 +1,1030 @@
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/project-vlsi -e /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/inst-env.yml -p /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/sky130.yml -p /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sram_generator-output.json -p /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/sim-rtl.yml --obj_dir /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build sim
+[96m[<global>] Loading hammer-vlsi libraries and reading settings[0m
+[96m[<global>] Loading technology 'hammer.technology.sky130'[0m
+[33m[<global>] Key technology.sky130.sky130_nda has a type str is not yet implemented[0m
+[33m[<global>] Key technology.sky130.openram_lib has a type str is not yet implemented[0m
+[33m[<global>] Key technology.sky130.dffram_lib has a type Optional[str] is not yet implemented[0m
+[33m[<global>] Key technology.sky130.pdk_home has a type Optional[str] is not yet implemented[0m
+[33m[<global>] Key technology.sky130.lvs_deck_sources has a type Optional[list[str]] is not yet implemented[0m
+[33m[<global>] Key technology.sky130.io_file has a type str is not yet implemented[0m
+[33m[tech] The install path: /path/to/skywater-src-nda does not exist, looked at key technology.sky130.sky130_nda[0m
+[96m[tech] Modifying Technology LEF: /home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T_tech/lef/sky130_scl_9T.tlef -> /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/tech-sky130-cache/sky130_scl_9T.tlef[0m
+[96m[tech] Modifying IO LEF: /home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef -> /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/tech-sky130-cache/sky130_ef_io.lef[0m
+[96m[tech] Patching HVL LS LEF: /home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_sc_hvl/lef/sky130_fd_sc_hvl.lef -> /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/tech-sky130-cache/fd_sc_hvl__lef/sky130_fd_sc_hvl__lsbufhv2lv_1.lef[0m
+Loaded Sky130 Tech
+[96m[tech] Overriding lef_file sky130_scl_9T.tlef with cache path /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/tech-sky130-cache/sky130_scl_9T.tlef[0m
+[96m[tech] Overriding lef_file sky130_ef_io.lef with cache path /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/tech-sky130-cache/sky130_ef_io.lef[0m
+[96m[<global>] Starting simulation with tool 'vcs'[0m
+[37m[sim] Running sub-step 'write_gl_files'[0m
+[37m[sim] Running sub-step 'run_vcs'[0m
+Executing subprocess: /home/ff/eecs151/hammer-tools/synopsys/vcs/P-2019.06/bin/vcs -full64 -lca -debug_access+all -timescale=1ns/1ps -CC -I$(VCS_HOME)/include -notice -line +lint=all,noVCDE,noONGS,noUI +warn=noTMR -error=PCWM-L +v2k -debug_access+all -kdb +vcs+lic+wait +vcs+initreg+random +define+no_cache_mem +rad -quiet +define+DEBUG -sverilog -lca /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Opcode_pkg.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUop_pkg.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/const_pkg.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALU.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUdec.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Riscv151.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Memory151.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ExtMemModel.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/no_cache_mem.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Cache.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_top.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_arbiter.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_test_harness.sv /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/antenna_stub.sv /home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v /home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_64x24m4w8/sram22_64x24m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_64x32m4w8/sram22_64x32m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_128x16m4w8/sram22_128x16m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_128x24m4w8/sram22_128x24m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_128x32m4w8/sram22_128x32m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_256x8m8w1/sram22_256x8m8w1.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_256x16m8w8/sram22_256x16m8w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_256x32m4w8/sram22_256x32m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_256x64m4w8/sram22_256x64m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_256x128m4w8/sram22_256x128m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_512x8m8w1/sram22_512x8m8w1.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_512x32m4w8/sram22_512x32m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_512x64m4w8/sram22_512x64m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_512x128m4w8/sram22_512x128m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_1024x8m8w1/sram22_1024x8m8w1.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_1024x32m8w8/sram22_1024x32m8w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_1024x64m4w8/sram22_1024x64m4w8.v /home/ff/eecs151/sp26/sram22_sky130_macros/sram22_2048x8m8w1/sram22_2048x8m8w1.v +define+CLOCK_PERIOD=20.00 +notimingcheck +delay_mode_zero -top ALUTestVectorTestbench -o /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sim-rundir/simv
+
+Error-[VERDI_VCS_MM] Possible VERDI_HOME and VCS_HOME mismatch
+  The Verdi tab and pli.a cannot be added to the 'vcs' compile command because
+  the file '/pli.a' could not be found.
+  Please check to make sure VERDI_HOME and VCS_HOME point to installations
+  that are either both 32-bits or both 64-bits.
+
+
+Warning-[LCA_FEATURES_ENABLED] Usage warning
+  LCA features enabled by '-lca' argument on the command line.  For more
+  information regarding list of LCA features please refer to Chapter "LCA
+  features" in the VCS Release Notes
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALU.sv, 11
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: opcode_pkg::*
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALU.sv, 12
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: alu_op_pkg::*
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUdec.sv, 12
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: opcode_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUdec.sv, 12
+$unit
+  Package 'opcode_pkg' already wildcard imported.
+  Ignoring opcode_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUdec.sv, 13
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: alu_op_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUdec.sv, 13
+$unit
+  Package 'alu_op_pkg' already wildcard imported.
+  Ignoring alu_op_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Riscv151.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Memory151.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Memory151.sv, 3
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ExtMemModel.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ExtMemModel.sv, 3
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/no_cache_mem.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/no_cache_mem.sv, 3
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Cache.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/Cache.sv, 3
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_top.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_top.sv, 3
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_arbiter.sv, 3
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_arbiter.sv, 3
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 14
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: opcode_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 14
+$unit
+  Package 'opcode_pkg' already wildcard imported.
+  Ignoring opcode_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 15
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: alu_op_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 15
+$unit
+  Package 'alu_op_pkg' already wildcard imported.
+  Ignoring alu_op_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 96
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 112
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 119
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 126
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 133
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestbench.sv, 140
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv, 12
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: opcode_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv, 12
+$unit
+  Package 'opcode_pkg' already wildcard imported.
+  Ignoring opcode_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv, 13
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: alu_op_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv, 13
+$unit
+  Package 'alu_op_pkg' already wildcard imported.
+  Ignoring alu_op_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv, 96
+  Null statement is used in following verilog source.
+  Source info:       #1;
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_test_harness.sv, 4
+$unit
+  There is an import statement in $unit scope.
+  Although this is legal as per the SystemVerilog LRM, it means that package
+  content will be shared without explicit import of the package.
+  Package: const_pkg::*
+
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_test_harness.sv, 4
+$unit
+  Package 'const_pkg' already wildcard imported.
+  Ignoring const_pkg::*
+  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+
+
+Lint-[NS] Null statement
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/riscv_test_harness.sv, 179
+  Null statement is used in following verilog source.
+  Source info:       #0.1;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4519
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4518
+  ?    (x0) b    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4519
+  ?    (x0) ?    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4573
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4571
+  ?    (x0) 0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4573
+  ?    (x0) ?    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4573
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4572
+  ?    (x0) 1    0    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4573
+  ?    (x0) ?    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4627
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4625
+  ?    (x0) 1    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4627
+  ?    (x0) ?    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4627
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4626
+  ?    (x0) 0    0    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4627
+  ?    (x0) ?    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4688
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4687
+  ?    (x1) ?    ?    0    x    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4688
+  ?    (x1) ?    0    ?    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4693
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4691
+  ?    (x0) 0    0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4693
+  ?    (x0) ?    0    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4693
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4692
+  ?    (x0) 1    ?    0    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4693
+  ?    (x0) ?    0    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4699
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4698
+  ?    f    ?    0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4699
+  ?    f    ?    ?    0    ?    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4701
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4700
+  ?    b    *    0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4701
+  ?    b    *    ?    0    ?    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4736
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4735
+  ?    (x1) ?    ?    0    x    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4736
+  ?    (x1) ?    0    ?    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4741
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4739
+  ?    (x0) 0    0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4741
+  ?    (x0) ?    0    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4741
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4740
+  ?    (x0) 1    ?    0    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4741
+  ?    (x0) ?    0    0    x    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4747
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4746
+  ?    f    ?    0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4747
+  ?    f    ?    ?    0    ?    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4749
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4748
+  ?    b    *    0    ?    ?    : ?: -;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4749
+  ?    b    *    ?    0    ?    : ?: -;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4813
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4811
+  ?    1    1    ?    0    : ?: 1;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4813
+  ?    ?    ?    1    0    : ?: 1;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4814
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4812
+  ?    1    0    0    ?    : ?: 0;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4814
+  ?    ?    ?    ?    1    : ?: 0;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4820
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4816
+  ?    0    ?    *    0    : 1: 1;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4820
+  ?    ?    1    *    0    : 1: 1;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4821
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4817
+  ?    0    ?    0    *    : 0: 0;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4821
+  ?    ?    0    0    *    : 0: 0;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4838
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4836
+  ?    1    1    ?    0    : ?: 1;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4838
+  ?    ?    ?    1    ?    : ?: 1;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4839
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4837
+  ?    1    0    0    ?    : ?: 0;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4839
+  ?    ?    ?    0    1    : ?: 0;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4845
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4841
+  ?    0    ?    *    0    : 1: 1;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4845
+  ?    ?    1    *    0    : 1: 1;
+
+
+Lint-[OUDPE] UDP Entries Overlap
+/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v, 4846
+  Following UDP entries overlap each other as possibly they could have exactly
+  same set of input and output values.
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4842
+  ?    0    ?    0    *    : 0: 0;
+  "/home/ff/eecs151/sp26/sky130_pdk/sky130_scl_9T_0.1.2/sky130_scl_9T/verilog/sky130_scl_9T.v",
+  4846
+  ?    ?    0    0    *    : 0: 0;
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 2818
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 2819
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 2820
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 2821
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 2822
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 2823
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NS] Null statement
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 3158
+  Null statement is used in following verilog source.
+  Source info:     #1;
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 5912
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 5913
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 5914
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 5915
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 5916
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 5917
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NS] Null statement
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 6210
+  Null statement is used in following verilog source.
+  Source info:     #1;
+
+
+Lint-[NS] Null statement
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 8009
+  Null statement is used in following verilog source.
+  Source info:     #1;
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9704
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9705
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9706
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9707
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9708
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NCEID] Non-Constant Expression In Delay
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9709
+  Following delay expression must be a constant.
+  Source info: slow_delay
+
+
+Lint-[NS] Null statement
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 9846
+  Null statement is used in following verilog source.
+  Source info:     #1;
+
+
+Lint-[NS] Null statement
+/home/ff/eecs151/sp26/sky130_pdk/sky130A/libs.ref/sky130_fd_io/verilog/sky130_fd_io.v, 12065
+  Null statement is used in following verilog source.
+  Source info:     #1;
+
+4 modules and 0 UDP read.
+Generating code for _VCSgd_TvDRF
+Generating code for _VCSgd_reYIK
+Generating code for _VCSgd_SRv8y
+Generating code for _VCSgd_JU1Fm
+Generating code for _VCSgd_Ez0Nk
+Generating code for _VCSgd_HGHLs
+make[1]: Entering directory '/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sim-rundir/csrc'
+/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sim-rundir/simv up to date
+make[1]: Leaving directory '/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sim-rundir/csrc'
+/home/ff/eecs151/hammer-tools/synopsys/vcs/P-2019.06/bin/vcs: line 30656: 500066 Segmentation fault      (core dumped) ${TOOL_HOME}/bin/cfs_ident_exec -f ${XML_INPUT_EXE} -o "${fsearchDir}/idents_tapi.xml" -o_SrcFile "${dirSrcFiles}/src_files_c" ${all_dyn_libs} > tapi_xml_writer.log
+Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)
+[37m[sim] Running sub-step 'run_simulation'[0m
+[33m[sim] Not running any simulations because sim.inputs.execute_sim is unset.[0m
+Action sim config output written to output.json
+make runtest
+make[1]: Verzeichnis „/home/tmp/eecs151-agc/asic-project-sp26-timing_violations“ wird betreten
+cd /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sim-rundir && /home/tmp/eecs151-agc/asic-project-sp26-timing_violations/build/sim-rundir/simv -q +ntb_random_seed_automatic +max-cycles=1000
+Notice: timing checks disabled with +notimingcheck at compile-time
+NOTE: automatic random seed used: 9753825
+VCD+ Writer P-2019.06_Full64 Copyright (c) 1991-2019 by Synopsys Inc.
+PASS: opcode 0110111, funct 011, add_rshift_type 1
+	A: 0xa292f390, B: 0x0810475b, DUTout: 0x0810475b, REFout: 0x0810475b
+PASS: opcode 0010111, funct 000, add_rshift_type 1
+	A: 0xa0076899, B: 0x3c09cf0e, DUTout: 0xdc1137a7, REFout: 0xdc1137a7
+PASS: opcode 1101111, funct 100, add_rshift_type 1
+	A: 0xaae4f8c0, B: 0x01949a12, DUTout: 0xac7992d2, REFout: 0xac7992d2
+PASS: opcode 1100111, funct 111, add_rshift_type 1
+	A: 0xd03056f4, B: 0x06f8306f, DUTout: 0xd7288763, REFout: 0xd7288763
+PASS: opcode 1100011, funct 001, add_rshift_type 0
+	A: 0xdd157bab, B: 0x7f090e4a, DUTout: 0x5c1e89f5, REFout: 0x5c1e89f5
+PASS: opcode 0000011, funct 000, add_rshift_type 1
+	A: 0x2bcdb46f, B: 0xca0c4f19, DUTout: 0xf5da0388, REFout: 0xf5da0388
+PASS: opcode 0100011, funct 010, add_rshift_type 1
+	A: 0xc0b5235d, B: 0x2dbe0efb, DUTout: 0xee733258, REFout: 0xee733258
+PASS: opcode 0010011, funct 000, add_rshift_type 0
+	A: 0x97de667c, B: 0x0000002b, DUTout: 0x97de66a7, REFout: 0x97de66a7
+PASS: opcode 0010011, funct 010, add_rshift_type 0
+	A: 0xdc6c7b2a, B: 0xffff0d9e, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0010011, funct 011, add_rshift_type 0
+	A: 0xc20ad137, B: 0x000001f6, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0010011, funct 100, add_rshift_type 0
+	A: 0xf141f97d, B: 0x0000012d, DUTout: 0xf141f850, REFout: 0xf141f850
+PASS: opcode 0010011, funct 110, add_rshift_type 0
+	A: 0xa156d89c, B: 0xffff0aaf, DUTout: 0xffffdabf, REFout: 0xffffdabf
+PASS: opcode 0010011, funct 111, add_rshift_type 0
+	A: 0x5ba49139, B: 0x00000198, DUTout: 0x00000118, REFout: 0x00000118
+PASS: opcode 0010011, funct 001, add_rshift_type 0
+	A: 0x5753655d, B: 0x00000003, DUTout: 0xba9b2ae8, REFout: 0xba9b2ae8
+PASS: opcode 0010011, funct 101, add_rshift_type 0
+	A: 0x4229dba0, B: 0x00000004, DUTout: 0x04229dba, REFout: 0x04229dba
+PASS: opcode 0010011, funct 101, add_rshift_type 1
+	A: 0x24c39c51, B: 0x00000000, DUTout: 0x24c39c51, REFout: 0x24c39c51
+PASS: opcode 0110011, funct 000, add_rshift_type 0
+	A: 0x7357487b, B: 0xbd482891, DUTout: 0x309f710c, REFout: 0x309f710c
+PASS: opcode 0110011, funct 000, add_rshift_type 1
+	A: 0xa98f25a7, B: 0x456ecd31, DUTout: 0x64205876, REFout: 0x64205876
+PASS: opcode 0110011, funct 001, add_rshift_type 0
+	A: 0x48dcf164, B: 0xc826a393, DUTout: 0x8b200000, REFout: 0x8b200000
+PASS: opcode 0110011, funct 010, add_rshift_type 0
+	A: 0xaaec6c80, B: 0x4e108f07, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0110011, funct 011, add_rshift_type 0
+	A: 0x9356d3d8, B: 0x73a8d98a, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0110011, funct 100, add_rshift_type 0
+	A: 0xf9194a20, B: 0xcb811367, DUTout: 0x32985947, REFout: 0x32985947
+PASS: opcode 0110011, funct 101, add_rshift_type 0
+	A: 0xaf4460ac, B: 0x39782ceb, DUTout: 0x0015e88c, REFout: 0x0015e88c
+PASS: opcode 0110011, funct 101, add_rshift_type 1
+	A: 0xe6752f28, B: 0x00000017, DUTout: 0xffffffcc, REFout: 0xffffffcc
+PASS: opcode 0110011, funct 110, add_rshift_type 0
+	A: 0xc1130131, B: 0x5a50abac, DUTout: 0xdb53abbd, REFout: 0xdb53abbd
+PASS: opcode 0110011, funct 111, add_rshift_type 0
+	A: 0x95d0e238, B: 0xabfb17bb, DUTout: 0x81d00238, REFout: 0x81d00238
+PASS: opcode 0110111, funct 101, add_rshift_type 0
+	A: 0xef51700e, B: 0x403fc27e, DUTout: 0x403fc27e, REFout: 0x403fc27e
+PASS: opcode 0010111, funct 110, add_rshift_type 1
+	A: 0x7757cf3a, B: 0x4be764bc, DUTout: 0xc33f33f6, REFout: 0xc33f33f6
+PASS: opcode 1101111, funct 100, add_rshift_type 0
+	A: 0x2297b9b4, B: 0x4c27ac5a, DUTout: 0x6ebf660e, REFout: 0x6ebf660e
+PASS: opcode 1100111, funct 110, add_rshift_type 0
+	A: 0x41f76a43, B: 0x66b9f6eb, DUTout: 0xa8b1612e, REFout: 0xa8b1612e
+PASS: opcode 1100011, funct 010, add_rshift_type 0
+	A: 0x09316253, B: 0x6958f8f9, DUTout: 0x728a5b4c, REFout: 0x728a5b4c
+PASS: opcode 0000011, funct 011, add_rshift_type 0
+	A: 0xd9556a66, B: 0x5d8ee3ee, DUTout: 0x36e44e54, REFout: 0x36e44e54
+PASS: opcode 0100011, funct 111, add_rshift_type 1
+	A: 0xbe2d9c0d, B: 0x86590d21, DUTout: 0x4486a92e, REFout: 0x4486a92e
+PASS: opcode 0010011, funct 000, add_rshift_type 0
+	A: 0x5dec0c86, B: 0x000006e8, DUTout: 0x5dec136e, REFout: 0x5dec136e
+PASS: opcode 0010011, funct 010, add_rshift_type 0
+	A: 0xab42863a, B: 0x0000016b, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0010011, funct 011, add_rshift_type 0
+	A: 0xe82bfee2, B: 0x000000c2, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0010011, funct 100, add_rshift_type 0
+	A: 0x699b92b1, B: 0x000000cc, DUTout: 0x699b927d, REFout: 0x699b927d
+PASS: opcode 0010011, funct 110, add_rshift_type 0
+	A: 0x92d16ff8, B: 0x0000059e, DUTout: 0x92d16ffe, REFout: 0x92d16ffe
+PASS: opcode 0010011, funct 111, add_rshift_type 0
+	A: 0x6d3dc12b, B: 0x000002bb, DUTout: 0x0000002b, REFout: 0x0000002b
+PASS: opcode 0010011, funct 001, add_rshift_type 0
+	A: 0xca2fc6af, B: 0x00000019, DUTout: 0x5e000000, REFout: 0x5e000000
+PASS: opcode 0010011, funct 101, add_rshift_type 0
+	A: 0x6756508f, B: 0x00000019, DUTout: 0x00000033, REFout: 0x00000033
+PASS: opcode 0010011, funct 101, add_rshift_type 1
+	A: 0xdebc2561, B: 0x0000000d, DUTout: 0xfffef5e1, REFout: 0xfffef5e1
+PASS: opcode 0110011, funct 000, add_rshift_type 0
+	A: 0xa9bee93e, B: 0xa39f4d8c, DUTout: 0x4d5e36ca, REFout: 0x4d5e36ca
+PASS: opcode 0110011, funct 000, add_rshift_type 1
+	A: 0xba4edef0, B: 0x3bca4a3d, DUTout: 0x7e8494b3, REFout: 0x7e8494b3
+PASS: opcode 0110011, funct 001, add_rshift_type 0
+	A: 0xf9ba6c97, B: 0x8f521942, DUTout: 0xe6e9b25c, REFout: 0xe6e9b25c
+PASS: opcode 0110011, funct 010, add_rshift_type 0
+	A: 0xd4fee419, B: 0xaa022c5f, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0110011, funct 011, add_rshift_type 0
+	A: 0x679b74f3, B: 0xd4c655f8, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0110011, funct 100, add_rshift_type 0
+	A: 0xf7a6ae37, B: 0x5587b7b4, DUTout: 0xa2211983, REFout: 0xa2211983
+PASS: opcode 0110011, funct 101, add_rshift_type 0
+	A: 0xa9e0e72e, B: 0xf1dd4a15, DUTout: 0x0000054f, REFout: 0x0000054f
+PASS: opcode 0110011, funct 101, add_rshift_type 1
+	A: 0xc733e2ea, B: 0x00000013, DUTout: 0xfffff8e6, REFout: 0xfffff8e6
+PASS: opcode 0110011, funct 110, add_rshift_type 0
+	A: 0x8675adc1, B: 0x28e9efe1, DUTout: 0xaefdefe1, REFout: 0xaefdefe1
+PASS: opcode 0110011, funct 111, add_rshift_type 0
+	A: 0x99227238, B: 0xe60355f0, DUTout: 0x80025030, REFout: 0x80025030
+PASS: opcode 0110111, funct 111, add_rshift_type 0
+	A: 0xea515397, B: 0xe6844abb, DUTout: 0xe6844abb, REFout: 0xe6844abb
+PASS: opcode 0010111, funct 110, add_rshift_type 0
+	A: 0x0c9a9caa, B: 0xb006275f, DUTout: 0xbca0c409, REFout: 0xbca0c409
+PASS: opcode 1101111, funct 000, add_rshift_type 0
+	A: 0xfdf1e76e, B: 0x307263ee, DUTout: 0x2e644b5c, REFout: 0x2e644b5c
+PASS: opcode 1100111, funct 110, add_rshift_type 0
+	A: 0x602f1c0b, B: 0x63336330, DUTout: 0xc3627f3b, REFout: 0xc3627f3b
+PASS: opcode 1100011, funct 001, add_rshift_type 0
+	A: 0xdf307dba, B: 0xaea908a1, DUTout: 0x8dd9865b, REFout: 0x8dd9865b
+PASS: opcode 0000011, funct 001, add_rshift_type 1
+	A: 0xa07549b1, B: 0x371dd0dc, DUTout: 0xd7931a8d, REFout: 0xd7931a8d
+PASS: opcode 0100011, funct 100, add_rshift_type 0
+	A: 0x13babba0, B: 0x4cf44f5b, DUTout: 0x60af0afb, REFout: 0x60af0afb
+PASS: opcode 0010011, funct 000, add_rshift_type 0
+	A: 0xa2e2d807, B: 0xffff0dde, DUTout: 0xa2e1e5e5, REFout: 0xa2e1e5e5
+PASS: opcode 0010011, funct 010, add_rshift_type 0
+	A: 0x52337097, B: 0xffff0bec, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0010011, funct 011, add_rshift_type 0
+	A: 0x9898a86b, B: 0x000005fa, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0010011, funct 100, add_rshift_type 0
+	A: 0xc82f7b96, B: 0xffff0834, DUTout: 0x37d073a2, REFout: 0x37d073a2
+PASS: opcode 0010011, funct 110, add_rshift_type 0
+	A: 0x8c8ff381, B: 0xffff0ae9, DUTout: 0xfffffbe9, REFout: 0xfffffbe9
+PASS: opcode 0010011, funct 111, add_rshift_type 0
+	A: 0xa2f29b79, B: 0xffff0c29, DUTout: 0xa2f20829, REFout: 0xa2f20829
+PASS: opcode 0010011, funct 001, add_rshift_type 0
+	A: 0x5ca44bc0, B: 0x00000018, DUTout: 0xc0000000, REFout: 0xc0000000
+PASS: opcode 0010011, funct 101, add_rshift_type 0
+	A: 0x51cb9be5, B: 0x0000001d, DUTout: 0x00000002, REFout: 0x00000002
+PASS: opcode 0010011, funct 101, add_rshift_type 1
+	A: 0x6a7ad6f7, B: 0x0000001d, DUTout: 0x00000003, REFout: 0x00000003
+PASS: opcode 0110011, funct 000, add_rshift_type 0
+	A: 0x89c6fabd, B: 0x15e8d897, DUTout: 0x9fafd354, REFout: 0x9fafd354
+PASS: opcode 0110011, funct 000, add_rshift_type 1
+	A: 0xe84889a2, B: 0xd09ee9e0, DUTout: 0x17a99fc2, REFout: 0x17a99fc2
+PASS: opcode 0110011, funct 001, add_rshift_type 0
+	A: 0xc8a7a733, B: 0x1e800a72, DUTout: 0x9ccc0000, REFout: 0x9ccc0000
+PASS: opcode 0110011, funct 010, add_rshift_type 0
+	A: 0xddddd5a7, B: 0x84fb2b9d, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0110011, funct 011, add_rshift_type 0
+	A: 0x1c5480a9, B: 0x4c2a623d, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0110011, funct 100, add_rshift_type 0
+	A: 0xceb1bd10, B: 0x5adb38a7, DUTout: 0x946a85b7, REFout: 0x946a85b7
+PASS: opcode 0110011, funct 101, add_rshift_type 0
+	A: 0xdf4892b7, B: 0x9be3247c, DUTout: 0x0000000d, REFout: 0x0000000d
+PASS: opcode 0110011, funct 101, add_rshift_type 1
+	A: 0x8591902e, B: 0x0000001b, DUTout: 0xfffffff0, REFout: 0xfffffff0
+PASS: opcode 0110011, funct 110, add_rshift_type 0
+	A: 0x6862d953, B: 0x4a53d15b, DUTout: 0x6a73d95b, REFout: 0x6a73d95b
+PASS: opcode 0110011, funct 111, add_rshift_type 0
+	A: 0xdfd1714a, B: 0xd211bbed, DUTout: 0xd2113148, REFout: 0xd2113148
+PASS: opcode 0110111, funct 001, add_rshift_type 0
+	A: 0x26a2e310, B: 0x13f2efcc, DUTout: 0x13f2efcc, REFout: 0x13f2efcc
+PASS: opcode 0010111, funct 000, add_rshift_type 1
+	A: 0x551e9aba, B: 0x21031149, DUTout: 0x7621ac03, REFout: 0x7621ac03
+PASS: opcode 1101111, funct 100, add_rshift_type 1
+	A: 0x662444fe, B: 0x4b97febb, DUTout: 0xb1bc43b9, REFout: 0xb1bc43b9
+PASS: opcode 1100111, funct 100, add_rshift_type 1
+	A: 0x5b0f60c3, B: 0x8161e709, DUTout: 0xdc7147cc, REFout: 0xdc7147cc
+PASS: opcode 1100011, funct 001, add_rshift_type 0
+	A: 0xb3cdd9d2, B: 0xc1569be6, DUTout: 0x752475b8, REFout: 0x752475b8
+PASS: opcode 0000011, funct 101, add_rshift_type 0
+	A: 0x9f0eff60, B: 0xb8758233, DUTout: 0x57848193, REFout: 0x57848193
+PASS: opcode 0100011, funct 010, add_rshift_type 0
+	A: 0x1682ac7c, B: 0x80e47abe, DUTout: 0x9767273a, REFout: 0x9767273a
+PASS: opcode 0010011, funct 000, add_rshift_type 0
+	A: 0x16d3eeeb, B: 0x00000260, DUTout: 0x16d3f14b, REFout: 0x16d3f14b
+PASS: opcode 0010011, funct 010, add_rshift_type 0
+	A: 0x9c4cd983, B: 0xffff09e3, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0010011, funct 011, add_rshift_type 0
+	A: 0x41673e3c, B: 0xffff0e8c, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0010011, funct 100, add_rshift_type 0
+	A: 0xf626062c, B: 0x000004c7, DUTout: 0xf62602eb, REFout: 0xf62602eb
+PASS: opcode 0010011, funct 110, add_rshift_type 0
+	A: 0x95c6dc25, B: 0x0000046d, DUTout: 0x95c6dc6d, REFout: 0x95c6dc6d
+PASS: opcode 0010011, funct 111, add_rshift_type 0
+	A: 0xae5c30e3, B: 0xffff0b33, DUTout: 0xae5c0023, REFout: 0xae5c0023
+PASS: opcode 0010011, funct 001, add_rshift_type 0
+	A: 0xc1ccf2b2, B: 0x00000000, DUTout: 0xc1ccf2b2, REFout: 0xc1ccf2b2
+PASS: opcode 0010011, funct 101, add_rshift_type 0
+	A: 0xb5b424ca, B: 0x0000000d, DUTout: 0x0005ada1, REFout: 0x0005ada1
+PASS: opcode 0010011, funct 101, add_rshift_type 1
+	A: 0x7205df2e, B: 0x0000001c, DUTout: 0x00000007, REFout: 0x00000007
+PASS: opcode 0110011, funct 000, add_rshift_type 0
+	A: 0x947e789a, B: 0xc038f720, DUTout: 0x54b76fba, REFout: 0x54b76fba
+PASS: opcode 0110011, funct 000, add_rshift_type 1
+	A: 0xadc23796, B: 0x15369d6d, DUTout: 0x988b9a29, REFout: 0x988b9a29
+PASS: opcode 0110011, funct 001, add_rshift_type 0
+	A: 0xffd5db9c, B: 0xfc7424c8, DUTout: 0xd5db9c00, REFout: 0xd5db9c00
+PASS: opcode 0110011, funct 010, add_rshift_type 0
+	A: 0xd8cd3439, B: 0x2f42e54c, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0110011, funct 011, add_rshift_type 0
+	A: 0x4ec61bef, B: 0x131be78c, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0110011, funct 100, add_rshift_type 0
+	A: 0x9b68ff2e, B: 0x69afe282, DUTout: 0xf2c71dac, REFout: 0xf2c71dac
+PASS: opcode 0110011, funct 101, add_rshift_type 0
+	A: 0xb4d2c265, B: 0x01524d00, DUTout: 0xb4d2c265, REFout: 0xb4d2c265
+PASS: opcode 0110011, funct 101, add_rshift_type 1
+	A: 0xfa9c721d, B: 0x00000016, DUTout: 0xffffffea, REFout: 0xffffffea
+PASS: opcode 0110011, funct 110, add_rshift_type 0
+	A: 0x64023a3e, B: 0xcc292154, DUTout: 0xec2b3b7e, REFout: 0xec2b3b7e
+PASS: opcode 0110011, funct 111, add_rshift_type 0
+	A: 0x0b39992b, B: 0x2b471e81, DUTout: 0x0b011801, REFout: 0x0b011801
+PASS: opcode 0110111, funct 011, add_rshift_type 0
+	A: 0x9da2e62f, B: 0x6d95ddb1, DUTout: 0x6d95ddb1, REFout: 0x6d95ddb1
+PASS: opcode 0010111, funct 000, add_rshift_type 1
+	A: 0x6b0e31e8, B: 0x2da366a1, DUTout: 0x98b19889, REFout: 0x98b19889
+PASS: opcode 1101111, funct 100, add_rshift_type 1
+	A: 0x09b1e96a, B: 0xf6e4a892, DUTout: 0x009691fc, REFout: 0x009691fc
+PASS: opcode 1100111, funct 010, add_rshift_type 0
+	A: 0xef654a29, B: 0xfbcf0ab0, DUTout: 0xeb3454d9, REFout: 0xeb3454d9
+PASS: opcode 1100011, funct 001, add_rshift_type 1
+	A: 0x5e2c9829, B: 0x1c344ad1, DUTout: 0x7a60e2fa, REFout: 0x7a60e2fa
+PASS: opcode 0000011, funct 111, add_rshift_type 0
+	A: 0x9d072366, B: 0x7a2d599e, DUTout: 0x17347d04, REFout: 0x17347d04
+PASS: opcode 0100011, funct 100, add_rshift_type 0
+	A: 0xe3072134, B: 0x856598d7, DUTout: 0x686cba0b, REFout: 0x686cba0b
+PASS: opcode 0010011, funct 000, add_rshift_type 0
+	A: 0x758572da, B: 0xffff0f59, DUTout: 0x75848233, REFout: 0x75848233
+PASS: opcode 0010011, funct 010, add_rshift_type 0
+	A: 0x9d8a0afc, B: 0xffff09db, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0010011, funct 011, add_rshift_type 0
+	A: 0x700cdd9d, B: 0x000004e2, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0010011, funct 100, add_rshift_type 0
+	A: 0xed667350, B: 0xffff0bd3, DUTout: 0x12997883, REFout: 0x12997883
+PASS: opcode 0010011, funct 110, add_rshift_type 0
+	A: 0x72c7a4ca, B: 0x00000144, DUTout: 0x72c7a5ce, REFout: 0x72c7a5ce
+PASS: opcode 0010011, funct 111, add_rshift_type 0
+	A: 0xa8b38181, B: 0x0000011c, DUTout: 0x00000100, REFout: 0x00000100
+PASS: opcode 0010011, funct 001, add_rshift_type 0
+	A: 0x55cd81b8, B: 0x00000000, DUTout: 0x55cd81b8, REFout: 0x55cd81b8
+PASS: opcode 0010011, funct 101, add_rshift_type 0
+	A: 0x8ce90915, B: 0x00000010, DUTout: 0x00008ce9, REFout: 0x00008ce9
+PASS: opcode 0010011, funct 101, add_rshift_type 1
+	A: 0xff7879b3, B: 0x00000002, DUTout: 0xffde1e6c, REFout: 0xffde1e6c
+PASS: opcode 0110011, funct 000, add_rshift_type 0
+	A: 0x1bb5369e, B: 0x20a9c0b4, DUTout: 0x3c5ef752, REFout: 0x3c5ef752
+PASS: opcode 0110011, funct 000, add_rshift_type 1
+	A: 0xcee32375, B: 0x5b0aed21, DUTout: 0x73d83654, REFout: 0x73d83654
+PASS: opcode 0110011, funct 001, add_rshift_type 0
+	A: 0x36e8cadb, B: 0xe496f948, DUTout: 0xe8cadb00, REFout: 0xe8cadb00
+PASS: opcode 0110011, funct 010, add_rshift_type 0
+	A: 0xc261b550, B: 0x1d394b4e, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0110011, funct 011, add_rshift_type 0
+	A: 0x0ef8e2c9, B: 0xaad44473, DUTout: 0x00000001, REFout: 0x00000001
+PASS: opcode 0110011, funct 100, add_rshift_type 0
+	A: 0x9367acc6, B: 0x849fd179, DUTout: 0x17f87dbf, REFout: 0x17f87dbf
+PASS: opcode 0110011, funct 101, add_rshift_type 0
+	A: 0x1ac13037, B: 0xe9574401, DUTout: 0x0d60981b, REFout: 0x0d60981b
+PASS: opcode 0110011, funct 101, add_rshift_type 1
+	A: 0x0a29d81f, B: 0x0000001d, DUTout: 0x00000000, REFout: 0x00000000
+PASS: opcode 0110011, funct 110, add_rshift_type 0
+	A: 0x808f18bc, B: 0x056adf27, DUTout: 0x85efdfbf, REFout: 0x85efdfbf
+PASS: opcode 0110011, funct 111, add_rshift_type 0
+	A: 0x7efe811c, B: 0x4cccad78, DUTout: 0x4ccc8118, REFout: 0x4ccc8118
+
+
+ALL TESTS PASSED!
+$finish called from file "/home/tmp/eecs151-agc/asic-project-sp26-timing_violations/src/ALUTestVectorTestbench.sv", line 102.
+$finish at simulation time               130000
+make[1]: Verzeichnis „/home/tmp/eecs151-agc/asic-project-sp26-timing_violations“ wird verlassen
