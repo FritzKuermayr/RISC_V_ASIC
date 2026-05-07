@@ -15,42 +15,42 @@ vlsi.inputs.placement_constraints:
       bottom: 20
     x: 0
     y: 0
-    width:  &FP_WIDTH 3000
-    height: 3000
+    width:  &FP_WIDTH 3400
+    height: 3600
 
   # ICache
   - path: "riscv_top/mem/icache/Cache_Tag"
     type: hardmacro
     x: 60
-    y: 30
+    y: 250
     orientation: "r0"
     top_layer: met3
 
   - path: "riscv_top/mem/icache/Cache_Data_0"
     type: hardmacro
-    x: 500
-    y: 30
+    x: 550
+    y: 250
     orientation: "r0"
     top_layer: met3
 
   - path: "riscv_top/mem/icache/Cache_Data_1"
     type: hardmacro
-    x: 950
-    y: 30
+    x: 1050
+    y: 250
     orientation: "r0"
     top_layer: met3
 
   - path: "riscv_top/mem/icache/Cache_Data_2"
     type: hardmacro
-    x: 1400
-    y: 30
+    x: 1550
+    y: 250
     orientation: "r0"
     top_layer: met3
 
   - path: "riscv_top/mem/icache/Cache_Data_3"
     type: hardmacro
-    x: 1850
-    y: 30
+    x: 2050
+    y: 250
     orientation: "r0"
     top_layer: met3
 
@@ -58,35 +58,35 @@ vlsi.inputs.placement_constraints:
   - path: "riscv_top/mem/dcache/Cache_Tag"
     type: hardmacro
     x: 60
-    y: 1700
+    y: 2300
     orientation: "mx"
     top_layer: met3
 
   - path: "riscv_top/mem/dcache/Cache_Data_0"
     type: hardmacro
-    x: 500
-    y: 1700
+    x: 550
+    y: 2300
     orientation: "mx"
     top_layer: met3
 
   - path: "riscv_top/mem/dcache/Cache_Data_1"
     type: hardmacro
-    x: 900
-    y: 1700
+    x: 1050
+    y: 2300
     orientation: "mx"
     top_layer: met3
 
   - path: "riscv_top/mem/dcache/Cache_Data_2"
     type: hardmacro
-    x: 1300
-    y: 1700
+    x: 1550
+    y: 2300
     orientation: "mx"
     top_layer: met3
 
   - path: "riscv_top/mem/dcache/Cache_Data_3"
     type: hardmacro
-    x: 1700
-    y: 1700
+    x: 2050
+    y: 2300
     orientation: "mx"
     top_layer: met3
 
